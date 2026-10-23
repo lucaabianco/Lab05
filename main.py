@@ -61,22 +61,35 @@ def main(page: ft.Page):
     # TODO
     def conferma_nuovo_strumento(e):
         if anno.value.isdigit():
-            strumento_nuovo = deposito.aggiungi_strumento(tipo.value, marca.value, anno.value ,txtOut.value)
-            aggiorna_lista_strumenti()
-            for s in deposito.strumenti:
-                print(s)
+            if tipo.value and marca.value and anno.value and txtOut.value:
+                tipoDaAgg = tipo.value
+                marcaDaAgg = marca.value
+                annoDaAgg = anno.value
+                txtOutDaAgg = txtOut.value
+                strumento_nuovo = deposito.aggiungi_strumento(tipoDaAgg, marcaDaAgg, annoDaAgg ,txtOutDaAgg)
+                aggiorna_lista_strumenti()
+                #svuoto i textFields
+                tipo.value =""
+                marca.value =""
+                anno.value =""
+                txtOut.value = 0
+            else:
+                alert.show_alert("❌ Errore: Inserire i dati mancanti")
         else:
-            alert.show_alert("Inserire un valore valido per l'anno")
+            alert.show_alert("❌ Errore: Inserire un valore valido per l'anno")
 
     def handleAdd(e):
         current_val = txtOut.value
-        txtOut.value = float(current_val) + 1
+        txtOut.value = float(current_val) + 1      #il pulsante permette di cambiare il prezzo di 1€ per ogni click: potrebbe risultare lento, ma basta modificare questa riga e la riga 78
         txtOut.update()
 
     def handleRemove(e):
         current_val = txtOut.value
-        txtOut.value = float(current_val) - 1
-        txtOut.update()
+        if current_val > 0:
+            txtOut.value = float(current_val) - 1
+            txtOut.update()
+        else:
+            alert.show_alert("❌ Errore: Non è possibile avere un prezzo negativo")
 
 
     # --- EVENTI ---
