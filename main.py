@@ -36,7 +36,6 @@ def main(page: ft.Page):
     lista_strumenti = ft.ListView(expand=True, spacing=5, padding=10, auto_scroll=True)
 
     # Tutti i TextField per le info necessarie per aggiungere un nuovo strumento (tipo, marca, anno, contatore posti)
-    # TODO
     tipo = ft.TextField(value = "",  label="Tipo")
     marca = ft.TextField(value = "", label="Marca")
     anno = ft.TextField(value = "", label="Anno")
@@ -58,25 +57,27 @@ def main(page: ft.Page):
         txt_responsabile.value = f"Responsabile: {deposito.get_responsabile()}"
 
     # Handlers per la gestione dei pulsanti utili all'inserimento di un nuovo strumento
-    # TODO
     def conferma_nuovo_strumento(e):
-        if anno.value.isdigit():
-            if tipo.value and marca.value and anno.value and txtOut.value:
-                tipoDaAgg = tipo.value
-                marcaDaAgg = marca.value
-                annoDaAgg = anno.value
-                txtOutDaAgg = txtOut.value
-                strumento_nuovo = deposito.aggiungi_strumento(tipoDaAgg, marcaDaAgg, annoDaAgg ,txtOutDaAgg)
-                aggiorna_lista_strumenti()
-                #svuoto i textFields
-                tipo.value =""
-                marca.value =""
-                anno.value =""
-                txtOut.value = 0
-            else:
-                alert.show_alert("❌ Errore: Inserire i dati mancanti")
-        else:
+        tipoDaAgg = tipo.value.strip()
+        marcaDaAgg = marca.value.strip()
+        annoDaAgg = anno.value.strip()
+        txtOutDaAgg = txtOut.value
+
+        if not tipoDaAgg or not marcaDaAgg or not annoDaAgg:
+            alert.show_alert("❌ Errore: Inserire i dati mancanti")
+            return
+
+        if not annoDaAgg.isdigit() or int(annoDaAgg) <= 0:
             alert.show_alert("❌ Errore: Inserire un valore valido per l'anno")
+            return
+
+        deposito.aggiungi_strumento(tipoDaAgg, marcaDaAgg, int(annoDaAgg) ,float(txtOutDaAgg))
+        aggiorna_lista_strumenti()
+        #svuoto i textFields
+        tipo.value = ""
+        marca.value = ""
+        anno.value = ""
+        txtOut.value = 0
 
     def handleAdd(e):
         current_val = txtOut.value
@@ -85,7 +86,7 @@ def main(page: ft.Page):
 
     def handleRemove(e):
         current_val = txtOut.value
-        if current_val > 0:
+        if float(current_val) > 0:
             txtOut.value = float(current_val) - 1
             txtOut.update()
         else:
@@ -97,7 +98,6 @@ def main(page: ft.Page):
     pulsante_conferma_responsabile = ft.Button("Conferma", on_click=conferma_responsabile)
 
     # Pulsanti per la gestione dell'inserimento di un nuovo strumento
-    # TODO
     pulsante_conferma_nuovo_strumento = ft.Button("Aggiungi strumento", on_click=conferma_nuovo_strumento)
 
 
@@ -134,7 +134,6 @@ def main(page: ft.Page):
                alignment=ft.MainAxisAlignment.CENTER),
 
         # Sezione 3
-        # TODO
         ft.Text("Aggiungi nuovo strumento"),
         ft.Row(spacing=10,
                controls = [ tipo, marca, anno, btnMinus, txtOut, btnAdd],
