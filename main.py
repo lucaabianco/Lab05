@@ -37,6 +37,9 @@ def main(page: ft.Page):
 
     # Tutti i TextField per le info necessarie per aggiungere un nuovo strumento (tipo, marca, anno, contatore posti)
     # TODO
+    tipo = ft.TextField(value = "",  label="Tipo")
+    marca = ft.TextField(value = "", label="Marca")
+    anno = ft.TextField(value = "", label="Anno")
 
     # --- FUNZIONI APP ---
     def aggiorna_lista_strumenti():
@@ -56,6 +59,25 @@ def main(page: ft.Page):
 
     # Handlers per la gestione dei pulsanti utili all'inserimento di un nuovo strumento
     # TODO
+    def conferma_nuovo_strumento(e):
+        if anno.value.isdigit():
+            strumento_nuovo = deposito.aggiungi_strumento(tipo.value, marca.value, anno.value ,txtOut.value)
+            aggiorna_lista_strumenti()
+            for s in deposito.strumenti:
+                print(s)
+        else:
+            alert.show_alert("Inserire un valore valido per l'anno")
+
+    def handleAdd(e):
+        current_val = txtOut.value
+        txtOut.value = float(current_val) + 1
+        txtOut.update()
+
+    def handleRemove(e):
+        current_val = txtOut.value
+        txtOut.value = float(current_val) - 1
+        txtOut.update()
+
 
     # --- EVENTI ---
     toggle_cambia_tema = ft.Switch(label="Tema scuro", value=True, on_change=cambia_tema)
@@ -63,6 +85,25 @@ def main(page: ft.Page):
 
     # Pulsanti per la gestione dell'inserimento di un nuovo strumento
     # TODO
+    pulsante_conferma_nuovo_strumento = ft.Button("Aggiungi strumento", on_click=conferma_nuovo_strumento)
+
+
+    btnMinus = ft.IconButton(icon=ft.Icons.REMOVE,
+                             icon_color="red",
+                             icon_size=24, on_click=handleRemove)
+    btnAdd = ft.IconButton(icon=ft.Icons.ADD,
+                           icon_color="green",
+                           icon_size=24, on_click=handleAdd)
+    txtOut = ft.TextField(width=100, disabled=True,
+                          value=0,
+                          border={
+                              ft.ControlState.DEFAULT: ft.OutlineInputBorder(
+                                  side=ft.BorderSide(color="grey", width=1)),
+                              ft.ControlState.DISABLED: ft.OutlineInputBorder(
+                                  side=ft.BorderSide(color="grey", width=1))
+                          },
+                          text_align=ft.TextAlign.CENTER)
+
 
     # --- LAYOUT ---
     page.add(
@@ -81,6 +122,13 @@ def main(page: ft.Page):
 
         # Sezione 3
         # TODO
+        ft.Text("Aggiungi nuovo strumento"),
+        ft.Row(spacing=10,
+               controls = [ tipo, marca, anno, btnMinus, txtOut, btnAdd],
+               alignment=ft.MainAxisAlignment.CENTER),
+
+        ft.Row(controls = [pulsante_conferma_nuovo_strumento],
+               alignment = ft.MainAxisAlignment.CENTER),
 
         # Sezione 4
         ft.Divider(),
